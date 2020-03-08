@@ -27,11 +27,22 @@ class User{
     }
 
     save(){
-        if(this.id){
-            MyHttpRequest.put(`/users/${this.id}`, this.toJSON())
-        }else{
-            MyHttpRequest.post('/users', this.toJSON())
-        }
+        return new Promise((resolve, reject) => {
+            let promise
+            if(this._id){
+                promise = MyHttpRequest.put(`/users/${this._id}`, this.toJSON())
+            }else{
+                promise = MyHttpRequest.post('/users', this.toJSON())
+            }
+            promise.then(data => {
+                this.loadFromJson(data)
+                resolve(this)
+            }).catch(e => {
+                reject(e)
+            })
+        })
+
+        
     }
 
     toJSON(){
@@ -59,4 +70,8 @@ class User{
         if(!usersId > 0)
             usersId = 0
         usersId++
-        localStorage.setItem(
+        localStorage.setItem('usersId', usersId)
+        return usersId
+    }
+
+}

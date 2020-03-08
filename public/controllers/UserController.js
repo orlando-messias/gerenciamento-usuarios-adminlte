@@ -18,9 +18,11 @@ class UserController{
             
             this.getPhoto(this.formEl).then((content) => {
                 user.photo = content
-                user.save()   // metodo save() la da classe user
-                this.addLine(user)
-                this.formEl.reset()
+                user.save().then(user => {
+                    this.addLine(user)
+                    this.formEl.reset()
+                })  
+                
             }, (e) => {
                 console.error(e)
             })
@@ -51,13 +53,13 @@ class UserController{
 
                 let finalUser = new User()
                 finalUser.loadFromJson(newUser)
-                finalUser.save()  // metodo save() la da classe user
-
-                this.addUpudateTr(finalUser, tr)
-
-                this.updateCount()
-                this.formupdateEl.reset()
-                this.showFormCreate()   
+                console.log(finalUser)
+                finalUser.save().then(user => {
+                    this.addUpudateTr(user, tr)
+                    this.updateCount()
+                    this.formupdateEl.reset()
+                    this.showFormCreate()
+                })   
                 
             }, (e) => {
                 console.error(e)
@@ -196,7 +198,7 @@ class UserController{
             for(let name in json){
                 let field = this.formupdateEl.querySelector('[name=' + name + ']')
                 
-                if(name == 'id')
+                if(name == 'id' || name == "_id")
                     continue
 
                 switch(field.type){
